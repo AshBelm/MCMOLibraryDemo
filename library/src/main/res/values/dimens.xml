@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="color_pick_default_width">300dp</dimen>
+    <dimen name="color_pick_default_height_linear">40dp</dimen>
+    <dimen name="color_pick_default_height_detail">300dp</dimen>
+</resources>

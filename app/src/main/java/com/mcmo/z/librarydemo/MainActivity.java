@@ -23,6 +23,7 @@ public class MainActivity extends ListActivity {
         items.add(new Item("bottomDialog",BottomActivity.class));
         items.add(new Item("BlueToothScan",BuleToothScanActivity.class));
         items.add(new Item("NestedScrollDemo",NestedScrollActivity.class));
+        items.add(new Item("ColorPick",ColorPickActivity.class));
         setListAdapter(new MyAdapter());
     }
 

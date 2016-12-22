@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#fff"
+    android:orientation="vertical">
+    <com.mcmo.z.library.widget.ColorDetailView
+        android:id="@+id/cdv"
+        android:layout_width="wrap_content"
+        android:layout_height="200dp"
+        app:detailColor="#00f"
+        />
+    <com.mcmo.z.library.widget.LinearColorPickView
+        android:id="@+id/lcp"
+        android:layout_marginTop="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        />
+    <View
+        android:id="@+id/v"
+        android:layout_width="80dp"
+        android:layout_height="80dp"/>
+</LinearLayout>

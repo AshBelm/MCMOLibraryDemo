@@ -12,4 +12,8 @@
         <item name="android:windowEnterAnimation">@anim/dialog_bottom_in</item>
         <item name="android:windowExitAnimation">@anim/dialog_bottom_out</item>
     </style>
+
+    <declare-styleable name="ColorDetailView">
+        <attr name="detailColor" format="color"/>
+    </declare-styleable>
 </resources>
