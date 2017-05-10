@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="4dp"
+    android:paddingRight="4dp">
+
+    <TextView
+        android:id="@+id/tv_notify_download_title"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:textColor="#DDffffff"
+        android:text="123"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:layout_below="@id/tv_notify_download_title"
+        >
+        <TextView
+            android:id="@+id/tv_notify_download_percent"
+            android:layout_width="34dp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:gravity="right"
+            android:textColor="#8affffff"
+            />
+        <ProgressBar
+            android:id="@+id/pb_notify_download"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_toLeftOf="@id/tv_notify_download_percent"
+            android:layout_centerVertical="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxHeight="8dp"
+            android:minHeight="8dp"/>
+    </RelativeLayout>
+
+
+</LinearLayout>
