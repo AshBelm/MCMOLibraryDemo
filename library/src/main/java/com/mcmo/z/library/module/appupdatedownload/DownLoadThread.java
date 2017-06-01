@@ -27,6 +27,7 @@ public class DownLoadThread extends Thread {
     private DownLoadListener mListener;
     public static final int ERROR_INTERCEPT=1;
     public static final int ERROR_RENAME_FAILED=2;
+    public static final int ERROR_EXCEPTION=3;
 
     public DownLoadThread(String filePath, String fileName) {
         this.filePath = filePath;
@@ -102,16 +103,6 @@ public class DownLoadThread extends Thread {
                 if(mListener!=null){
                     mListener.onProgressChange(progress);
                 }
-//                curTime = System.currentTimeMillis();
-//                if ((progress - currentPro >= 1) && (curTime - preTime) > 500) {//限制更新的速度，如果过快机器会卡死
-//                    preTime = curTime;
-//                    currentPro = progress;
-//                    Message msg = Message.obtain();
-//                    msg.what = WHAT_PROCESS;
-//                    msg.arg1 = progress;
-//                    handler.sendMessage(msg);
-//                }
-                //更新进度
             }
             fos.flush();
             fos.close();
@@ -129,12 +120,11 @@ public class DownLoadThread extends Thread {
                     mListener.onDownLoadFailed(ERROR_RENAME_FAILED);
                 }
             }
-        } catch (FileNotFoundException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+            if(mListener!=null){
+                mListener.onDownLoadFailed(ERROR_EXCEPTION);
+            }
         }
 
     }
