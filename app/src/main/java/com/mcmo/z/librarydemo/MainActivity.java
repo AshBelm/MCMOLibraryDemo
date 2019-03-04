@@ -16,10 +16,6 @@ import android.widget.TextView;
 
 import com.mcmo.z.library.module.appupdatedownload.APPDownLoadReceiver;
 import com.mcmo.z.library.module.appupdatedownload.APPDownLoadService;
-import com.mcmo.z.library.module.appupdatedownload.APPDownLoader;
-import com.mcmo.z.library.module.appupdatedownload.DownLoadItem;
-import com.mcmo.z.library.module.appupdatedownload.DownLoadManagerHelper;
-import com.mcmo.z.library.module.appupdatedownload.DownLoadThread;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -66,8 +62,6 @@ public class MainActivity extends ListActivity {
 
     @Override
     protected void onDestroy() {
-        DownLoadManagerHelper.getInstance().unRegister(this);
-        DownLoadManagerHelper.release();
         super.onDestroy();
     }
 
