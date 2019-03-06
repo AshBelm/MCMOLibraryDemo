@@ -1,10 +1,8 @@
 package com.mcmo.z.librarydemo;
 
-import android.app.DownloadManager;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Environment;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -16,6 +14,7 @@ import android.widget.TextView;
 
 import com.mcmo.z.library.module.appupdatedownload.APPDownLoadReceiver;
 import com.mcmo.z.library.module.appupdatedownload.APPDownLoadService;
+import com.mcmo.z.librarydemo.mulitgesture.MultiGestureActivity;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -32,6 +31,7 @@ public class MainActivity extends ListActivity {
         items.add(new Item("BlueToothScan",BuleToothScanActivity.class));
         items.add(new Item("NestedScrollDemo",NestedScrollActivity.class));
         items.add(new Item("ColorPick",ColorPickActivity.class));
+        items.add(new Item("MultiGesture", MultiGestureActivity.class));
         setListAdapter(new MyAdapter());
 
  String uri = "http://a.wdjcdn.com/release/files/phoenix/5.52.20.13520/wandoujia-wandoujia-web_inner_referral_binded_5.52.20.13520.apk?remove=2&append=%8E%00eyJhcHBEb3dubG9hZCI6eyJkb3dubG9hZFR5cGUiOiJkb3dubG9hZF9ieV9wYWNrYWdlX25hbWUiLCJwYWNrYWdlTmFtZSI6ImNvbS5zb2h1LnNvaHV2aWRlbyJ9fQWdj01B00007e0647";

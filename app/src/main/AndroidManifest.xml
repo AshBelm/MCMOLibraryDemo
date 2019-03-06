@@ -19,10 +19,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".BottomActivity"></activity>
-        <activity android:name=".BuleToothScanActivity"></activity>
-        <activity android:name=".NestedScrollActivity"></activity>
-        <activity android:name=".ColorPickActivity"></activity>
+        <activity android:name=".BottomActivity"/>
+        <activity android:name=".BuleToothScanActivity"/>
+        <activity android:name=".NestedScrollActivity"/>
+        <activity android:name=".ColorPickActivity"/>
+        <activity android:name=".mulitgesture.MultiGestureActivity"/>
 
     </application>
 
