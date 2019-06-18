@@ -8,6 +8,22 @@ import android.view.View;
 import android.widget.AdapterView;
 
 /**
+ * RecycleView 的点击事件监听
+ * 使用：
+ * recyclerView.addOnItemTouchListener(new OnRecycleViewItemClickListener(recyclerView){
+ *
+ *             @Override
+ *             public void onItemClick(RecyclerView view, RecyclerView.ViewHolder holder, int position) {
+ *                 Toast.makeText(RecycleViewItemClickActivity.this,"Click "+position,Toast.LENGTH_SHORT).show();
+ *             }
+ *
+ *             @Override
+ *             public void onItemLongClick(RecyclerView view, RecyclerView.ViewHolder holder, int position) {
+ *                 Toast.makeText(RecycleViewItemClickActivity.this,"Long "+position,Toast.LENGTH_SHORT).show();
+ *
+ *             }
+ *         });
+ * 一定要点击到itemView内才有效。并不是RecycleView大小范围内
  * Created by ZhangWei on 2017/5/12.
  */
 

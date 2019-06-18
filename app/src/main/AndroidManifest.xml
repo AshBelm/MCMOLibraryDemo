@@ -25,6 +25,7 @@
         <activity android:name=".ColorPickActivity"/>
         <activity android:name=".mulitgesture.MultiGestureActivity"/>
         <activity android:name=".StatusBarActivity" android:theme="@style/StatusBarActTheme"/>
+        <activity android:name=".RecycleViewItemClickActivity"/>
 
     </application>
 

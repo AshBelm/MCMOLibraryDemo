@@ -33,6 +33,7 @@ public class MainActivity extends ListActivity {
         items.add(new Item("ColorPick",ColorPickActivity.class));
         items.add(new Item("MultiGesture", MultiGestureActivity.class));
         items.add(new Item("StatusBar", StatusBarActivity.class));
+        items.add(new Item("RecycleViewItemClick", RecycleViewItemClickActivity.class));
         setListAdapter(new MyAdapter());
 
  String uri = "http://a.wdjcdn.com/release/files/phoenix/5.52.20.13520/wandoujia-wandoujia-web_inner_referral_binded_5.52.20.13520.apk?remove=2&append=%8E%00eyJhcHBEb3dubG9hZCI6eyJkb3dubG9hZFR5cGUiOiJkb3dubG9hZF9ieV9wYWNrYWdlX25hbWUiLCJwYWNrYWdlTmFtZSI6ImNvbS5zb2h1LnNvaHV2aWRlbyJ9fQWdj01B00007e0647";
