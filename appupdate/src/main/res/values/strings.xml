@@ -1,0 +1,6 @@
+<resources>
+    <string name="appupdate_tip_title">提示</string>
+    <string name="appupdate_tip_msg">当前应用缺少必要权限。\n由于下载应用更新包，需要文件读取权限，为保证程序正常更新请您同意应用使用本权限。</string>
+    <string name="appupdate_tip_sure">知道了</string>
+    <string name="appupdate_tip_cancel">取消</string>
+</resources>

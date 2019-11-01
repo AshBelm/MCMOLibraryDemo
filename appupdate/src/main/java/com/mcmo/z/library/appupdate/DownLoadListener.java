@@ -1,4 +1,4 @@
-package com.mcmo.z.library.module.appupdatedownload;
+package com.mcmo.z.library.appupdate;
 
 /**
  * Created by ZhangWei on 2017/5/10.

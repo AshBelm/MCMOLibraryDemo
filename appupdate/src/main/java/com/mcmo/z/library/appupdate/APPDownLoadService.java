@@ -1,4 +1,4 @@
-package com.mcmo.z.library.module.appupdatedownload;
+package com.mcmo.z.library.appupdate;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -6,22 +6,26 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
+import android.support.v4.content.LocalBroadcastManager;
+import android.text.TextUtils;
 import android.widget.RemoteViews;
 
-import com.mcmo.z.library.R;
+import java.io.File;
+
 
 /**
  * Created by ZhangWei on 2017/6/1.
  */
 
-public class APPDownLoadService extends Service implements DownLoadListener,APPDownLoadConstant{
+public class APPDownLoadService extends Service implements DownLoadListener, APPDownLoadConstant {
     private String filePath, fileName;
     private String url;
+    private boolean deleteOldApk;
     private String successText, successTicker, successTitle, downloadTicker, downloadTitle;
     private int successIcon, downloadIcon;
     private NotificationManager mNotificationManager;
@@ -31,7 +35,8 @@ public class APPDownLoadService extends Service implements DownLoadListener,APPD
     private boolean useNotification;
     private boolean autoInstall;
 
-    private static final String KEY_FILEPATH = "filePath";
+    private final String DEFUALT_DOWNLOAD_FOLDER = "app";
+    private static final String KEY_FOLDERNAME = "folderName";
     private static final String KEY_FILENAME = "fileName";
     private static final String KEY_URL = "url";
     private static final String KEY_S_TITLE = "successTitle";
@@ -44,36 +49,33 @@ public class APPDownLoadService extends Service implements DownLoadListener,APPD
     private static final String KEY_NOTIFICATION = "useNotification";
     private static final String KEY_AUTOINSTALL = "autoInstall";
 
-    private static boolean isEmpty(String str) {
-        return str == null || str.trim().length() == 0;
-    }
 
-    public static Intent getIntent(Context context, @NonNull String filePath, @NonNull String fileName, @NonNull String url, int successIcon, String successText, String successTicker, String successTitle, int downloadIcon, String downloadTicker, String downloadTitle, boolean useNotification,boolean autoInstall) {
-        if (isEmpty(successTitle))
-            successTitle = "下载完成，点击安装";
-        if (isEmpty(successText))
-            successText = fileName;
-        if (isEmpty(successTicker))
-            successTicker = "下载完成";
-        if (isEmpty(downloadTicker))
-            downloadTicker = "开始下载";
-        if (isEmpty(downloadTitle))
-            downloadTitle = fileName;
+    public static Intent getIntent(Context context, AppUpdateParam p) {
+//        if (TextUtils.isEmpty(successTitle))
+//            successTitle = "下载完成，点击安装";
+//        if (TextUtils.isEmpty(successText))
+//            successText = fileName;
+//        if (TextUtils.isEmpty(successTicker))
+//            successTicker = "下载完成";
+//        if (TextUtils.isEmpty(downloadTicker))
+//            downloadTicker = "开始下载";
+//        if (TextUtils.isEmpty(downloadTitle))
+//            downloadTitle = fileName;
 
         Intent intent = new Intent(context, APPDownLoadService.class);
         Bundle bundle = new Bundle();
-        bundle.putString(KEY_FILEPATH, filePath);
-        bundle.putString(KEY_FILENAME, fileName);
-        bundle.putString(KEY_URL, url);
-        bundle.putInt(KEY_S_ICON, successIcon);
-        bundle.putString(KEY_S_TITLE, successTitle);
-        bundle.putString(KEY_S_TICKER, successTicker);
-        bundle.putString(KEY_S_TEXT, successText);
-        bundle.putInt(KEY_D_ICON, downloadIcon);
-        bundle.putString(KEY_D_TITLE, downloadTitle);
-        bundle.putString(KEY_D_TICKER, downloadTicker);
-        bundle.putBoolean(KEY_NOTIFICATION, useNotification);
-        bundle.putBoolean(KEY_AUTOINSTALL,autoInstall);
+        bundle.putString(KEY_FOLDERNAME, p.saveFolder);
+        bundle.putString(KEY_FILENAME, p.fileName);
+        bundle.putString(KEY_URL, p.url);
+        bundle.putInt(KEY_S_ICON, p.successIcon);
+        bundle.putString(KEY_S_TITLE, p.successTitle);
+        bundle.putString(KEY_S_TICKER, p.successTicker);
+        bundle.putString(KEY_S_TEXT, p.successText);
+        bundle.putInt(KEY_D_ICON, p.downloadIcon);
+        bundle.putString(KEY_D_TITLE, p.downloadTitle);
+        bundle.putString(KEY_D_TICKER, p.downloadTicker);
+        bundle.putBoolean(KEY_NOTIFICATION, p.useNotification);
+        bundle.putBoolean(KEY_AUTOINSTALL, p.autoInstall);
         intent.putExtras(bundle);
         return intent;
     }
@@ -86,22 +88,38 @@ public class APPDownLoadService extends Service implements DownLoadListener,APPD
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if(mDownLoadThread==null){
+        if (mDownLoadThread == null) {
             parserIntent(intent);
-            startThread(filePath,fileName,url);
+            startThread(filePath, fileName, url);
         }
         return super.onStartCommand(intent, flags, startId);
     }
-    public void startThread(String filePath,String fileName,String url) {
-        mDownLoadThread = new DownLoadThread(filePath,fileName);
+
+    public void startThread(String filePath, String fileName, String url) {
+        mDownLoadThread = new DownLoadThread(filePath, fileName);
         mDownLoadThread.setUri(url);
         mDownLoadThread.setDownLoadListener(this);
         mDownLoadThread.start();
     }
 
+    private String createDownloadPath(String folderName) {
+        if (TextUtils.isEmpty(folderName)) {
+            folderName = DEFUALT_DOWNLOAD_FOLDER;
+        } else {
+            if (folderName.startsWith("\\")) {
+                folderName = folderName.substring(1);
+            }
+            if (folderName.endsWith("\\")) {
+                folderName = folderName.substring(0, folderName.length() - 1);
+            }
+        }
+        return getExternalCacheDir().getAbsolutePath() + File.separator + folderName;
+    }
+
     private void parserIntent(Intent intent) {
         Bundle bundle = intent.getExtras();
-        filePath = bundle.getString(KEY_FILEPATH);
+        String folderName = bundle.getString(KEY_FOLDERNAME);
+        filePath = createDownloadPath(folderName);
         fileName = bundle.getString(KEY_FILENAME);
         url = bundle.getString(KEY_URL);
         useNotification = bundle.getBoolean(KEY_NOTIFICATION, true);
@@ -112,12 +130,14 @@ public class APPDownLoadService extends Service implements DownLoadListener,APPD
         downloadIcon = bundle.getInt(KEY_D_ICON, -1);
         downloadTitle = bundle.getString(KEY_D_TITLE);
         downloadTicker = bundle.getString(KEY_D_TICKER);
-        autoInstall = bundle.getBoolean(KEY_AUTOINSTALL,false);
+        autoInstall = bundle.getBoolean(KEY_AUTOINSTALL, false);
     }
-    public void clearNotify(){
+
+    public void clearNotify() {
         NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         nm.cancel(NOTIFICATION_ID);
     }
+
     public void sendSuccessNotify(String file) {
 
         Notification.Builder builder = new Notification.Builder(this);
@@ -178,6 +198,7 @@ public class APPDownLoadService extends Service implements DownLoadListener,APPD
     public boolean onUnbind(Intent intent) {
         return super.onUnbind(intent);
     }
+
     long preTime = 0;
     long curTime = 0;
     int mCurrentPro = -2;
@@ -187,59 +208,86 @@ public class APPDownLoadService extends Service implements DownLoadListener,APPD
         curTime = 0;
         mCurrentPro = -2;
     }
+
     @Override
     public void onProgressChange(int progress) {
-        if(useNotification){
-            curTime = System.currentTimeMillis();
-            if ((progress - mCurrentPro >= 1) && (curTime - preTime) > 500) {//限制更新的速度，如果过快机器会卡死
-                preTime = curTime;
-                mCurrentPro = progress;
-                Intent intent = new Intent(BROADCAST_ACTION);
-                intent.putExtra(BROADCAST_STATUS,BROADCAST_STATUS_DOWNLOADING);
-                intent.putExtra(BROADCAST_PROGRESS,progress);
-                sendBroadcast(intent);
+        curTime = System.currentTimeMillis();
+        if ((progress - mCurrentPro >= 1) && (curTime - preTime) > 500) {//限制更新的速度，如果过快机器会卡死
+            preTime = curTime;
+            mCurrentPro = progress;
+            sendProgressBroadcast(progress);
+            if (useNotification) {
                 sendCustomNotify(progress);
             }
         }
     }
 
+
     @Override
     public void onDownLoadStart() {
-        if(useNotification){
+        reset();
+        sendStartBroadCast();
+        if (useNotification) {
             sendCustomNotify(0);
         }
-        reset();
-        Intent intent = new Intent(BROADCAST_ACTION);
-        intent.putExtra(BROADCAST_STATUS,BROADCAST_STATUS_START);
-        sendBroadcast(intent);
     }
+
 
     @Override
     public void onDownLoadFailed(int error) {
-        if(useNotification){
+        sendFailedBroadcast(error);
+        stopSelf();
+        if (useNotification) {
             clearNotify();
         }
-        Intent intent = new Intent(BROADCAST_ACTION);
-        intent.putExtra(BROADCAST_STATUS,BROADCAST_STATUS_FAILED);
-        intent.putExtra(BROADCAST_ERROR,error);
-        sendBroadcast(intent);
-        stopSelf();
     }
+
 
     @Override
     public void onDownLoadComplete(String file) {
-        if(useNotification){
-            if(autoInstall){
-                APPDownLoadUtil.installApk(this,file);
+        //如果在pause中反注册广播接收器，那么如果自动安装当页面跳出时就会反注册，那么就收不到下载完成的事件了，所以广播发送写在前面
+        sendCompletedBroadcast(file);
+        stopSelf();
+        if (useNotification) {
+            if (autoInstall) {
+                // TODO: 2019/11/1 最好是安装成功再清除
                 clearNotify();
-            }else{
+            } else {
                 sendSuccessNotify(file);
             }
         }
+        if (autoInstall) {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+                //8.0及以上因为安装应用需要权限，所以交由BaseAppUpdateDialog实现
+                APPDownLoadUtil.installApk(this, file);
+            }
+        }
+    }
+
+    private void sendProgressBroadcast(int progress) {
         Intent intent = new Intent(BROADCAST_ACTION);
-        intent.putExtra(BROADCAST_STATUS,BROADCAST_STATUS_COMPLETE);
-        intent.putExtra(BROADCAST_APP_FILEPATH,file);
-        sendBroadcast(intent);
-        stopSelf();
+        intent.putExtra(BROADCAST_STATUS, BROADCAST_STATUS_DOWNLOADING);
+        intent.putExtra(BROADCAST_PROGRESS, progress);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+    }
+
+    private void sendStartBroadCast() {
+        Intent intent = new Intent(BROADCAST_ACTION);
+        intent.putExtra(BROADCAST_STATUS, BROADCAST_STATUS_START);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+    }
+
+    private void sendFailedBroadcast(int error) {
+        Intent intent = new Intent(BROADCAST_ACTION);
+        intent.putExtra(BROADCAST_STATUS, BROADCAST_STATUS_FAILED);
+        intent.putExtra(BROADCAST_ERROR, error);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+    }
+
+    private void sendCompletedBroadcast(String file) {
+        Intent intent = new Intent(BROADCAST_ACTION);
+        intent.putExtra(BROADCAST_STATUS, BROADCAST_STATUS_COMPLETED);
+        intent.putExtra(BROADCAST_APP_FILEPATH, file);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 }
