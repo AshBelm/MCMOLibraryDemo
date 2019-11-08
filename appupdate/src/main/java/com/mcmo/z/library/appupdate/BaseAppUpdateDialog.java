@@ -169,8 +169,10 @@ public abstract class BaseAppUpdateDialog extends DialogFragment {
         public void onDownLoadCompleted(String filePath) {
             mApkFilePath = filePath;
             BaseAppUpdateDialog.this.onDownloadCompleted(filePath);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                installApkV26(filePath);
+            if(mUpdateParam.autoInstall){
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    installApkV26(filePath);
+                }
             }
         }
 

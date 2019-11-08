@@ -1,40 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingLeft="4dp"
-    android:paddingRight="4dp">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="64dp"
+    android:orientation="vertical"
+    android:layout_gravity="center_vertical"
+    android:gravity="center_vertical"
+    android:padding="4dp">
+
+    <ImageView
+        android:id="@+id/iv_notify_icon"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:scaleType="center"
+        tools:background="#00C4FF" />
 
     <TextView
         android:id="@+id/tv_notify_download_title"
         android:layout_width="wrap_content"
         android:layout_height="20dp"
-        android:textColor="#DDffffff"
-        android:text="123"/>
-    <RelativeLayout
+        android:layout_marginLeft="4dp"
+        android:layout_toRightOf="@id/iv_notify_icon"
+        android:textColor="#333"
+        tools:text="正在下载..." />
+
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="20dp"
-        android:layout_below="@id/tv_notify_download_title"
-        >
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_toRightOf="@id/iv_notify_icon"
+        android:layout_marginLeft="4dp"
+        android:layout_below="@id/tv_notify_download_title">
+
+        <ProgressBar
+            android:id="@+id/pb_notify_download"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="34dp"
+            android:layout_gravity="center_vertical"
+            android:maxHeight="8dp"
+            android:minHeight="8dp"
+            tools:progress="50" />
+
         <TextView
             android:id="@+id/tv_notify_download_percent"
             android:layout_width="34dp"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_alignParentRight="true"
+            android:layout_gravity="right|center_vertical"
             android:gravity="right"
-            android:textColor="#8affffff"
-            />
-        <ProgressBar
-            android:id="@+id/pb_notify_download"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_toLeftOf="@id/tv_notify_download_percent"
-            android:layout_centerVertical="true"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:maxHeight="8dp"
-            android:minHeight="8dp"/>
-    </RelativeLayout>
+            android:textColor="#333"
+            tools:text="50%" />
+    </FrameLayout>
 
-
-</LinearLayout>
+</RelativeLayout>

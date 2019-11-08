@@ -39,12 +39,8 @@ public class AppUpdateDialog extends BaseAppUpdateDialog {
     private TextView tvProgress;
     private Button btnUpdate;
     private ProgressBar pb;
-    public static final String DOWNLOAD_PATH = "app" + File.separator + "xz";
-//    private DownLoadReceiver mReceiver;
 
     private Context context;
-    private String appFilePath;
-    private String cacheDir;
     private String url;//下载地址
     private View.OnClickListener onAppInstallListener;
 
@@ -52,7 +48,6 @@ public class AppUpdateDialog extends BaseAppUpdateDialog {
     public void onAttach(Context context) {
         super.onAttach(context);
         this.context = context;
-        cacheDir = context.getExternalCacheDir().getAbsolutePath();
     }
     public static AppUpdateDialog createInstance(String url){
         AppUpdateDialog dialog = new AppUpdateDialog();
@@ -72,10 +67,6 @@ public class AppUpdateDialog extends BaseAppUpdateDialog {
         super.onCreate(savedInstanceState);
         parseArguments();
         setStyle(DialogFragment.STYLE_NO_FRAME, R.style.MiddleDialogStyle);
-//        mReceiver = new DownLoadReceiver();
-//        if (mReceiver != null) {
-//            mReceiver.register(context);
-//        }
     }
 
     @Nullable
@@ -93,44 +84,16 @@ public class AppUpdateDialog extends BaseAppUpdateDialog {
                 p.setAutoInstall(true);
                 p.setSaveFolder("app");
                 p.setFileName("newApp.apk");
-                p.disableNotification();
-//                p.enableNotification(R.mipmap.ic_launcher,"cehngg","asfa","adfa",R.mipmap.ic_launcher,"fa","afa9","fasdfa");
-
+                p.setEnableNotification(true);
+                p.setDownLoadingNotication(R.mipmap.ic_launcher,"下下下","新版来喽");
+                p.setSuccessNotiication(R.mipmap.ic_launcher,"完事","快看看","有啥新内容");
                 downloadOrInstall(p);
-//                if (!TextUtils.isEmpty(appFilePath)) {
-//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//                        boolean haveInstallPermission = context.getPackageManager().canRequestPackageInstalls();
-//                        if (!haveInstallPermission) {
-//                            startRequestPackageInstallActivity();
-//                        } else {
-//                            APPDownLoadUtil.installApk(context, appFilePath);
-//                        }
-//                    } else {
-//                        APPDownLoadUtil.installApk(context, appFilePath);
-//                    }
-//                } else {
-//                    downApp();
-//                    changeDownloadingStatus(true);
-//                }
             }
         });
         tvMsg.setText("新版本来了！");
         return v;
     }
 
-    private void startRequestPackageInstallActivity() {
-        Uri packageURI = Uri.parse("package:" + context.getApplicationContext().getPackageName());
-        Intent intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, packageURI);
-        startActivityForResult(intent, 10001);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-//        if (mReceiver != null) {
-//            mReceiver.unRegister(context);
-//        }
-    }
 
     @Override
     protected void onDownloadStart() {
@@ -158,68 +121,10 @@ public class AppUpdateDialog extends BaseAppUpdateDialog {
 
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 10001) {
-            if (resultCode == RESULT_OK) {
-                APPDownLoadUtil.installApk(context, appFilePath);
-            } else {
-                Toast.makeText(context, "未打开'安装未知来源'开关,无法安装,请打开后重试", Toast.LENGTH_LONG).show();
-            }
-        }
-    }
-
     private void changeDownloadingStatus(boolean isDownloading) {
         btnUpdate.setVisibility(isDownloading ? View.INVISIBLE : View.VISIBLE);
         pb.setVisibility(isDownloading ? View.VISIBLE : View.INVISIBLE);
         tvProgress.setVisibility(isDownloading ? View.VISIBLE : View.INVISIBLE);
     }
 
-    public void setOnAppInstallListener(View.OnClickListener onAppInstallListener) {
-        this.onAppInstallListener = onAppInstallListener;
-    }
-
-    private void downApp() {
-        AppUpdateParam p = new AppUpdateParam(url);
-        p.setSaveFolder("app");
-        p.setFileName("newApp.apk");
-        p.disableNotification();
-        Intent intent = APPDownLoadService.getIntent(getContext(),p);
-        context.startService(intent);
-    }
-
-    private class DownLoadReceiver extends APPDownLoadReceiver {
-        private static final String TAG = "DownLoadReceiver";
-
-        @Override
-        public void onDownLoadStart() {
-            Log.e(TAG, "onDownLoadStart");
-        }
-
-        @Override
-        public void onDownLoadFailed(int error) {
-            Toast.makeText(context, "下载失败请重试", Toast.LENGTH_SHORT).show();
-            changeDownloadingStatus(false);
-        }
-
-        @Override
-        public void onDownLoadCompleted(String filePath) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                boolean haveInstallPermission = context.getPackageManager().canRequestPackageInstalls();
-                if (!haveInstallPermission) {
-                    startRequestPackageInstallActivity();
-                }
-            }
-            appFilePath = filePath;
-            changeDownloadingStatus(false);
-            btnUpdate.setText("安装");
-        }
-
-        @Override
-        public void onDownLoading(int progress) {
-            pb.setProgress(progress);
-            tvProgress.setText(progress + "%");
-        }
-    }
 }

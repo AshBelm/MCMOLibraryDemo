@@ -57,9 +57,15 @@ public class APPDownLoadUtil {
      * @param path
      */
     public static void installApk(Context context, String path) {
+        Intent i = getInstallIntent(context, path);
+        if (i == null) return;
+        context.startActivity(i);
+    }
+
+    public static Intent getInstallIntent(Context context, String path) {
         File apkFile = new File(path);
         if (!apkFile.exists()) {
-            return;
+            return null;
         }
         Uri uri;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -73,17 +79,7 @@ public class APPDownLoadUtil {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         }
-        context.startActivity(i);
-    }
-
-    public static Intent getInstallIntent(String path) {
-        File apkFile = new File(path);
-        if (!apkFile.exists()) {
-            return null;
-        }
-        Intent i = new Intent(Intent.ACTION_VIEW);
-        i.setDataAndType(Uri.parse("file://" + path), MIME_APK);
-        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         return i;
     }
+
 }
