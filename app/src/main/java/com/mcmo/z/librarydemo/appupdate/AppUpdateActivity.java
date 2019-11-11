@@ -30,7 +30,8 @@ public class AppUpdateActivity extends AppCompatActivity {
         btn2 = findViewById(R.id.btn2);
         btn1.setOnClickListener(v -> {
             if(mDialog == null){
-                String url = "https://alissl.ucdl.pp.uc.cn/fs01/union_pack/Wandoujia_1848829_web_seo_baidu_homepage.apk";
+                String url = "https://120.27.229.21//download/xz-app-1.1.apk";
+//                String url = "https://alissl.ucdl.pp.uc.cn/fs01/union_pack/Wandoujia_1848829_web_seo_baidu_homepage.apk";
                 mDialog = AppUpdateDialog.createInstance(url);
             }
             mDialog.show(getSupportFragmentManager(),"update");

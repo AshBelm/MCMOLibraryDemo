@@ -1,19 +1,10 @@
 package com.mcmo.z.librarydemo.appupdate;
 
-import android.Manifest;
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,16 +14,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-import com.mcmo.z.library.appupdate.APPDownLoadReceiver;
-import com.mcmo.z.library.appupdate.APPDownLoadService;
-import com.mcmo.z.library.appupdate.APPDownLoadUtil;
 import com.mcmo.z.library.appupdate.AppUpdateParam;
 import com.mcmo.z.library.appupdate.BaseAppUpdateDialog;
 import com.mcmo.z.librarydemo.R;
-
-import java.io.File;
-
-import static android.app.Activity.RESULT_OK;
 
 public class AppUpdateDialog extends BaseAppUpdateDialog {
     private TextView tvMsg;
@@ -85,7 +69,8 @@ public class AppUpdateDialog extends BaseAppUpdateDialog {
                 p.setSaveFolder("app");
                 p.setFileName("newApp.apk");
                 p.setEnableNotification(true);
-                p.setDownLoadingNotication(R.mipmap.ic_launcher,"下下下","新版来喽");
+                p.setTrustAllVerify(false);
+                p.setDownLoadingNotification(R.mipmap.ic_launcher,"下下下","新版来喽");
                 p.setSuccessNotiication(R.mipmap.ic_launcher,"完事","快看看","有啥新内容");
                 downloadOrInstall(p);
             }

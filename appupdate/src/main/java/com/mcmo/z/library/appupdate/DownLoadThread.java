@@ -7,6 +7,19 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 /**
  * Created by ZhangWei on 2017/5/10.
@@ -20,6 +33,7 @@ public class DownLoadThread extends Thread {
     private String suffx;
     private boolean interceptFlag;
     private boolean deleteOldApk = true;//是否删除旧的安装包
+    private boolean trustAllVerify = false;//是否信任所以证书
     private DownLoadListener mListener;
     private static final int ERROR_INTERCEPT = 1;
     private static final int ERROR_RENAME_FAILED = 2;
@@ -42,6 +56,10 @@ public class DownLoadThread extends Thread {
 
     public void setDeleteOldApk(boolean deleteOldApk) {
         this.deleteOldApk = deleteOldApk;
+    }
+
+    public void setTrustAllVerify(boolean trustAllVerify) {
+        this.trustAllVerify = trustAllVerify;
     }
 
     public void setUri(String uri) {
@@ -87,7 +105,10 @@ public class DownLoadThread extends Thread {
         try {
             FileOutputStream fos = new FileOutputStream(tmp);
             URL url = new URL(uri);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();//之前是HttpUrlConnection,但如果公司没有证书那么久需要用HttpsUrlConnection忽略证书了
+            if(trustAllVerify){
+                setTrustAll(conn);
+            }
             conn.connect();
             int length = conn.getContentLength();
             InputStream is = conn.getInputStream();
@@ -135,6 +156,36 @@ public class DownLoadThread extends Thread {
 
     }
 
+    private void setTrustAll(HttpsURLConnection conn) throws NoSuchAlgorithmException, KeyManagementException {
+        X509TrustManager tm509 = new X509TrustManager() {
+            @Override
+            public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+                //do noting 接受任意客户端证书
+            }
+
+            @Override
+            public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+                //do nothing，接受任意服务端证书
+            }
+
+            @Override
+            public X509Certificate[] getAcceptedIssuers() {
+                return new X509Certificate[0];
+            }
+        };
+        SSLContext sslContext = SSLContext.getInstance("TLS");
+        sslContext.init(null,new TrustManager[]{tm509},new SecureRandom());
+        SSLSocketFactory ssf = sslContext.getSocketFactory();
+        conn.setSSLSocketFactory(ssf);
+        HostnameVerifier trustAllHostnameVerifier = new HostnameVerifier() {
+            @Override
+            public boolean verify(String hostname, SSLSession session) {
+                return true;//信任所以
+            }
+        };
+        conn.setHostnameVerifier(trustAllHostnameVerifier);
+    }
+
     private String getUseAbleFileName(String path, String name) {
         String fileName = name;
         for (int i = 0; i < Integer.MAX_VALUE; i++) {
@@ -147,4 +198,6 @@ public class DownLoadThread extends Thread {
         }
         return null;
     }
+
+
 }

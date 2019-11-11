@@ -37,6 +37,7 @@ public class AppUpdateParam implements Parcelable {
     protected String failedTitle;
     protected String failedText;
     protected boolean isDeleteOldApk = true;
+    protected boolean isTrustAllVerify = false;//是否信任所以证书
 
     public AppUpdateParam(String url) {
         this.url = url;
@@ -60,6 +61,7 @@ public class AppUpdateParam implements Parcelable {
         failedTitle = in.readString();
         failedText = in.readString();
         isDeleteOldApk = in.readByte() != 0;
+        isTrustAllVerify = in.readByte() != 0;
     }
 
     public static final Creator<AppUpdateParam> CREATOR = new Creator<AppUpdateParam>() {
@@ -98,6 +100,14 @@ public class AppUpdateParam implements Parcelable {
         isDeleteOldApk = deleteOldApk;
     }
 
+    public boolean isTrustAllVerify() {
+        return isTrustAllVerify;
+    }
+
+    public void setTrustAllVerify(boolean trustAllVerify) {
+        isTrustAllVerify = trustAllVerify;
+    }
+
     /**
      * 设置下载成功是通知的文案
      *
@@ -120,13 +130,13 @@ public class AppUpdateParam implements Parcelable {
      * @param ticker 上升显示的文字，开始下载时显示一次
      * @param title  下载时通知显示的标题
      */
-    public void setDownLoadingNotication(int icon, String ticker, String title) {
+    public void setDownLoadingNotification(int icon, String ticker, String title) {
         this.downloadIcon = icon;
         this.downloadTicker = ticker;
         this.downloadTitle = title;
     }
 
-    public void setFialedNotication(int icon, String ticker, String title, String content) {
+    public void setFialedNotification(int icon, String ticker, String title, String content) {
         this.failedIcon = icon;
         this.failedTicker = ticker;
         this.failedTitle = title;
@@ -157,5 +167,6 @@ public class AppUpdateParam implements Parcelable {
         dest.writeString(failedTitle);
         dest.writeString(failedText);
         dest.writeByte((byte) (isDeleteOldApk ? 1 : 0));
+        dest.writeByte((byte) (isTrustAllVerify ? 1 : 0));
     }
 }

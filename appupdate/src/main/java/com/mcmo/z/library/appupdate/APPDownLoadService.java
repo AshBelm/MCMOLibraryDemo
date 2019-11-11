@@ -107,16 +107,17 @@ public class APPDownLoadService extends Service implements DownLoadListener, APP
         if (mDownLoadThread == null) {
             parserIntent(intent);
             clearAllNotify();
-            startThread(filePath, mUpdateParam.fileName, mUpdateParam.url);
+            startThread(filePath, mUpdateParam.fileName, mUpdateParam.url,mUpdateParam.isDeleteOldApk,mUpdateParam.isTrustAllVerify);
         }
         return super.onStartCommand(intent, flags, startId);
     }
 
-    public void startThread(String filePath, String fileName, String url) {
+    public void startThread(String filePath, String fileName, String url,boolean deleteOld,boolean trustAllVerify) {
         mDownLoadThread = new DownLoadThread(filePath, fileName);
         mDownLoadThread.setUri(url);
         mDownLoadThread.setDownLoadListener(this);
-        mDownLoadThread.setDeleteOldApk(mUpdateParam.isDeleteOldApk);
+        mDownLoadThread.setDeleteOldApk(deleteOld);
+        mDownLoadThread.setTrustAllVerify(trustAllVerify);
         mDownLoadThread.start();
     }
 
