@@ -33,6 +33,7 @@ public class MainActivity extends ListActivity {
 //        setContentView(R.layout.activity_main);
         items=new ArrayList<>();
         items.add(new Item("bottomDialog",BottomActivity.class));
+        items.add(new Item("bestfragment",BestFragmentActivity.class));
         items.add(new Item("BlueToothScan",BuleToothScanActivity.class));
         items.add(new Item("NestedScrollDemo",NestedScrollActivity.class));
         items.add(new Item("ColorPick",ColorPickActivity.class));
