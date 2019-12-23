@@ -16,7 +16,7 @@ import java.io.File;
  */
 public class APPDownLoadUtil {
     public static final String MIME_APK = "application/vnd.android.package-archive";
-    private static final String AUTHORITY = "com.mcmo.z.library.appupdate.fileprovider";
+    private static final String AUTHORITY = BuildConfig.APPLICATION_ID+".appupdatefileprovider";
 
     /**
      * 获取当前客户端版本信息
