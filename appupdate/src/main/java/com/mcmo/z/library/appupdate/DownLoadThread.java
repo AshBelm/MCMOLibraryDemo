@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -105,12 +106,20 @@ public class DownLoadThread extends Thread {
         try {
             FileOutputStream fos = new FileOutputStream(tmp);
             URL url = new URL(uri);
-            HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();//之前是HttpUrlConnection,但如果公司没有证书那么久需要用HttpsUrlConnection忽略证书了
-            if(trustAllVerify){
-                setTrustAll(conn);
+            URLConnection conn;
+            if(uri.startsWith("https")){
+                HttpsURLConnection httpsConn = (HttpsURLConnection) url.openConnection();
+                if(trustAllVerify){
+                    setTrustAll(httpsConn);
+                }
+                conn = httpsConn;
+            }else{
+               HttpURLConnection  httpConn = (HttpURLConnection) url.openConnection();
+               conn = httpConn;
             }
             conn.connect();
             int length = conn.getContentLength();
+            if(length==0) length = -1;//length可能为0未保证不因为除数为0导致崩溃
             InputStream is = conn.getInputStream();
             int count = 0;
             byte buf[] = new byte[1024];

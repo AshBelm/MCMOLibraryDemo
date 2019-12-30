@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.mcmo.z.library.appupdate.APPDownLoadReceiver;
 import com.mcmo.z.library.appupdate.APPDownLoadService;
+import com.mcmo.z.library.module.logger.LoggerMgr;
 import com.mcmo.z.librarydemo.appupdate.AppUpdateActivity;
 import com.mcmo.z.librarydemo.mulitgesture.MultiGestureActivity;
 
@@ -64,9 +65,9 @@ public class MainActivity extends ListActivity {
 
     private boolean checkPermissions(){
         for (int i = 0; i < per.length; i++) {
-            if(ActivityCompat.checkSelfPermission(this,per[i])== PackageManager.PERMISSION_DENIED){
-                return false;
-            }
+//            if(ActivityCompat.checkSelfPermission(this,per[i])== PackageManager.PERMISSION_DENIED){
+//                return false;
+//            }
         }
         return true;
     }
@@ -117,6 +118,9 @@ public class MainActivity extends ListActivity {
             tv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+//                    for (int i = 0; i < 10; i++) {
+//                        Log.d("测试", "onClick: 滴滴滴滴滴滴滴滴滴滴滴滴滴 "+position+" "+i);
+//                    }
                     Intent  intent=new Intent(MainActivity.this,items.get(position).clazz);
                     startActivity(intent);
                 }
