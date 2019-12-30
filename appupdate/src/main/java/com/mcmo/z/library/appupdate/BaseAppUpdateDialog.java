@@ -14,9 +14,14 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.widget.Toast;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -49,6 +54,35 @@ public abstract class BaseAppUpdateDialog extends DialogFragment {
         super.onDestroy();
         mReceiver.unRegister(context);
     }
+    //<editor-fold desc="修改在onSaveInstance弹出对话框导致崩溃的问题">
+    @Override
+    public void show(FragmentManager manager, String tag) {
+//        super.show(manager, tag);
+        try {
+            Class c = Class.forName("android.support.v4.app.DialogFragment");
+            Constructor con = c.getConstructor();
+            Object obj = con.newInstance();
+            Field dismissed = c.getDeclaredField("mDismissed");
+            dismissed.setAccessible(true);
+            dismissed.set(obj, false);
+            Field shownByMe = c.getDeclaredField("mShownByMe");
+            shownByMe.setAccessible(true);
+            shownByMe.set(obj, false);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        FragmentTransaction ft = manager.beginTransaction();
+        ft.add(this, tag);
+        ft.commitAllowingStateLoss();
+    }
+
+    @Override
+    public void dismiss() {
+//        super.dismiss();
+        dismissAllowingStateLoss();
+    }
+    //</editor-fold>
+
 
     public void downloadOrInstall(AppUpdateParam appUpdateParam) {
         mUpdateParam = appUpdateParam;
