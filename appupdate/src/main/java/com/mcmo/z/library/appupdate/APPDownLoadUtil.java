@@ -16,7 +16,7 @@ import java.io.File;
  */
 public class APPDownLoadUtil {
     public static final String MIME_APK = "application/vnd.android.package-archive";
-    private static final String AUTHORITY = BuildConfig.APPLICATION_ID+".appupdatefileprovider";
+    private static final String AUTHORITY_SUFFIX = ".appupdatefileprovider";
 
     /**
      * 获取当前客户端版本信息
@@ -69,7 +69,8 @@ public class APPDownLoadUtil {
         }
         Uri uri;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            uri = FileProvider.getUriForFile(context.getApplicationContext(), AUTHORITY, apkFile);
+            String authority = context.getApplicationContext().getPackageName()+AUTHORITY_SUFFIX;
+            uri = FileProvider.getUriForFile(context.getApplicationContext(), authority, apkFile);
         } else {
             uri = Uri.parse("file://" + path);
         }
