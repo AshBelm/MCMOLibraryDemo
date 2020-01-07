@@ -11,9 +11,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.RemoteViews;
 
 import java.io.File;
@@ -53,7 +55,9 @@ public class APPDownLoadService extends Service implements DownLoadListener, APP
     public void onCreate() {
         super.onCreate();
         mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        createNotificationChannel();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            createNotificationChannel(false);
+        }
     }
 
     private void parserIntent(Intent intent) {
@@ -95,10 +99,12 @@ public class APPDownLoadService extends Service implements DownLoadListener, APP
             mUpdateParam.failedTicker = getString(R.string.appupdate_default_failed_ticker);
         }
         if (TextUtils.isEmpty(mUpdateParam.failedTitle)) {
-            mUpdateParam.failedTitle = getString(R.string.appupdate_default_failed_title);;
+            mUpdateParam.failedTitle = getString(R.string.appupdate_default_failed_title);
+            ;
         }
         if (TextUtils.isEmpty(mUpdateParam.failedText)) {
-            mUpdateParam.failedText = getString(R.string.appupdate_default_failed_text);;
+            mUpdateParam.failedText = getString(R.string.appupdate_default_failed_text);
+            ;
         }
     }
 
@@ -107,12 +113,12 @@ public class APPDownLoadService extends Service implements DownLoadListener, APP
         if (mDownLoadThread == null) {
             parserIntent(intent);
             clearAllNotify();
-            startThread(filePath, mUpdateParam.fileName, mUpdateParam.url,mUpdateParam.isDeleteOldApk,mUpdateParam.isTrustAllVerify);
+            startThread(filePath, mUpdateParam.fileName, mUpdateParam.url, mUpdateParam.isDeleteOldApk, mUpdateParam.isTrustAllVerify);
         }
         return super.onStartCommand(intent, flags, startId);
     }
 
-    public void startThread(String filePath, String fileName, String url,boolean deleteOld,boolean trustAllVerify) {
+    public void startThread(String filePath, String fileName, String url, boolean deleteOld, boolean trustAllVerify) {
         mDownLoadThread = new DownLoadThread(filePath, fileName);
         mDownLoadThread.setUri(url);
         mDownLoadThread.setDownLoadListener(this);
@@ -139,17 +145,21 @@ public class APPDownLoadService extends Service implements DownLoadListener, APP
     private void clearProgressNotify() {
         mNotificationManager.cancel(NOTIFICATION_PROGRESS_ID);
     }
-    private void clearSuccessNotify(){
+
+    private void clearSuccessNotify() {
         mNotificationManager.cancel(NOTIFICATION_SUCCESS_ID);
     }
-    private void clearFailedNotify(){
+
+    private void clearFailedNotify() {
         mNotificationManager.cancel(NOTIFICATION_FAILED_ID);
     }
-    private void clearAllNotify(){
+
+    private void clearAllNotify() {
         clearProgressNotify();
         clearFailedNotify();
         clearSuccessNotify();
     }
+
     public void sendSuccessNotify(String file) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID);
         builder.setContentTitle(mUpdateParam.successTitle)//设置通知栏标题
@@ -167,7 +177,7 @@ public class APPDownLoadService extends Service implements DownLoadListener, APP
 
         Notification n = builder.build();
         n.flags = Notification.FLAG_AUTO_CANCEL;
-        Intent intent = APPDownLoadUtil.getInstallIntent(this,file);
+        Intent intent = APPDownLoadUtil.getInstallIntent(this, file);
         if (intent != null) {
             n.contentIntent = PendingIntent.getActivity(this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         }
@@ -223,15 +233,24 @@ public class APPDownLoadService extends Service implements DownLoadListener, APP
         mNotificationManager.notify(NOTIFICATION_PROGRESS_ID, mNotification);
     }
 
-    private void createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = getString(R.string.appupdate_channel_name);
-            String description = getString(R.string.appupdate_channel_description);
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
-            channel.setDescription(description);
-            mNotificationManager.createNotificationChannel(channel);
+    /**
+     * 创建一个通知的Channel，如果Channel已经创建成功就不能修改，修改的话就删除原来的channel再重新创建，如：实现动态的开关震动功能(mNotificationManager.deleteNotificationChannel();)
+     * @param isVibrate
+     */
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void createNotificationChannel(boolean isVibrate) {
+        CharSequence name = getString(R.string.appupdate_channel_name);
+        String description = getString(R.string.appupdate_channel_description);
+        int importance = NotificationManager.IMPORTANCE_DEFAULT;
+        NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+        channel.setDescription(description);
+        if (isVibrate) {
+            channel.enableVibration(true);
+        } else {
+            channel.enableVibration(false);
+            channel.setVibrationPattern(new long[]{0});
         }
+        mNotificationManager.createNotificationChannel(channel);
     }
 
     @Override
