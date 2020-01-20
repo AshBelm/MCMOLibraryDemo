@@ -35,7 +35,7 @@ public class APPDownLoadService extends Service implements DownLoadListener, APP
     public static final int NOTIFICATION_FAILED_ID = 160;
     private DownLoadThread mDownLoadThread;//因为在下载失败和成功是都会停止服务所以这里没用线程池之类的东西
 
-    private final String CHANNEL_ID = "channel898";
+    private String CHANNEL_ID = "channel898";
     private final String DEFAULT_DOWNLOAD_FOLDER = "app";
     private final String DEFAULT_APK_NAME = "NewVersionApp.apk";
 
@@ -54,9 +54,10 @@ public class APPDownLoadService extends Service implements DownLoadListener, APP
     @Override
     public void onCreate() {
         super.onCreate();
+        CHANNEL_ID = getPackageName()+"channel898";
         mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            createNotificationChannel(false);
+            createNotificationChannel(false,false);
         }
     }
 
@@ -238,12 +239,15 @@ public class APPDownLoadService extends Service implements DownLoadListener, APP
      * @param isVibrate
      */
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private void createNotificationChannel(boolean isVibrate) {
+    private void createNotificationChannel(boolean hasSound,boolean isVibrate) {
         CharSequence name = getString(R.string.appupdate_channel_name);
         String description = getString(R.string.appupdate_channel_description);
         int importance = NotificationManager.IMPORTANCE_DEFAULT;
         NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
         channel.setDescription(description);
+        if(!hasSound){
+            channel.setSound(null,null);
+        }
         if (isVibrate) {
             channel.enableVibration(true);
         } else {
