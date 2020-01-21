@@ -3,10 +3,8 @@ package com.mcmo.z.librarydemo;
 import android.Manifest;
 import android.app.ListActivity;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Environment;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -16,10 +14,9 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.mcmo.z.library.appupdate.APPDownLoadReceiver;
-import com.mcmo.z.library.appupdate.APPDownLoadService;
-import com.mcmo.z.library.module.logger.LoggerMgr;
 import com.mcmo.z.librarydemo.appupdate.AppUpdateActivity;
 import com.mcmo.z.librarydemo.mulitgesture.MultiGestureActivity;
+import com.mcmo.z.librarydemo.statusbar.StatusBarActivity;
 
 import java.io.File;
 import java.util.ArrayList;

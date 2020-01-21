@@ -27,11 +27,13 @@
         <activity android:name=".NestedScrollActivity"/>
         <activity android:name=".ColorPickActivity"/>
         <activity android:name=".mulitgesture.MultiGestureActivity"/>
-        <activity android:name=".StatusBarActivity" android:theme="@style/StatusBarActTheme"/>
+        <activity android:name=".statusbar.StatusBarActivity" android:theme="@style/StatusBarActTheme"/>
         <activity android:name=".RecycleViewItemClickActivity"/>
         <activity android:name=".TheOnlyCodeActivity"/>
         <activity android:name=".appupdate.AppUpdateActivity" android:theme="@style/Theme.AppCompat.Light"/>
         <activity android:name=".BestFragmentActivity" android:theme="@style/Theme.AppCompat.Light"/>
+        <activity android:name=".statusbar.MultiStatusBarActivity" android:theme="@style/StatusBarActTheme"/>
+        <activity android:name=".statusbar.MultiStatusBarViewPageActivity" android:theme="@style/StatusBarActTheme"/>
     </application>
 
 </manifest>
