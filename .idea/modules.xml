@@ -3,6 +3,10 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/MCMOLibraryDemo.iml" filepath="$PROJECT_DIR$/MCMOLibraryDemo.iml" group="MCMOLibraryDemo" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/MCMOLibraryDemo-app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/MCMOLibraryDemo-app.iml" group="MCMOLibraryDemo/app" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/appupdate/MCMOLibraryDemo-appupdate.iml" filepath="$PROJECT_DIR$/.idea/modules/appupdate/MCMOLibraryDemo-appupdate.iml" group="MCMOLibraryDemo/appupdate" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/library/MCMOLibraryDemo-library.iml" filepath="$PROJECT_DIR$/.idea/modules/library/MCMOLibraryDemo-library.iml" group="MCMOLibraryDemo/library" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/McMo-MCMOLibraryDemo.iml" filepath="$PROJECT_DIR$/.idea/modules/McMo-MCMOLibraryDemo.iml" group="MCMOLibraryDemo" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="MCMOLibraryDemo/app" />
       <module fileurl="file://$PROJECT_DIR$/appupdate/appupdate.iml" filepath="$PROJECT_DIR$/appupdate/appupdate.iml" group="MCMOLibraryDemo/appupdate" />
       <module fileurl="file://$PROJECT_DIR$/library/library.iml" filepath="$PROJECT_DIR$/library/library.iml" group="MCMOLibraryDemo/library" />

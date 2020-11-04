@@ -116,6 +116,7 @@ public abstract class BaseAppUpdateDialog extends DialogFragment {
         if (requestCode == PERMISSION_REQUEST_CODE) {
             for (int i = 0; i < grantResults.length; i++) {
                 if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
+                    //当用户选择了"永不提醒"后用代码请求权限，系统不弹窗直接走到这里返回"未授权"
                     onPermissionDenied();
                     return;
                 }
@@ -137,7 +138,28 @@ public abstract class BaseAppUpdateDialog extends DialogFragment {
         }
         mTipDialog.show();
     }
+    private AlertDialog mManualSettingDialog;
 
+    private void showPermissionManualSettingDialog() {
+        if (mManualSettingDialog == null) {
+            mManualSettingDialog = new AlertDialog.Builder(getContext()).setTitle(R.string.appupdate_tip_title).setMessage(R.string.appupdate_tip_manual_setting)
+                    .setPositiveButton(R.string.appupdate_tip_manual_sure, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            try{
+                                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                                Uri uri = Uri.fromParts("package", context.getPackageName(), null);
+                                intent.setData(uri);
+                                startActivity(intent);
+                            }catch (Exception e){
+                                e.printStackTrace();
+                                Toast.makeText(context, "您的设备无法自动跳转设置页面，请您自行前往设置。", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }).setNegativeButton(R.string.appupdate_tip_cancel, null).create();
+        }
+        mManualSettingDialog.show();
+    }
     /**
      * 启动服务下载apk
      */
@@ -174,6 +196,10 @@ public abstract class BaseAppUpdateDialog extends DialogFragment {
     }
 
     protected void onPermissionDenied() {
+        if (!shouldShowRequestPermissionRationale(needPermission[0]) || !shouldShowRequestPermissionRationale(needPermission[1])) {
+            //如果权限申请被拒绝并且shouldShowRequestPermissionRationale方法返回false,就表示用户选择了“永不提示”
+            showPermissionManualSettingDialog();
+        }
     }
 
     protected abstract void onDownloadStart();
